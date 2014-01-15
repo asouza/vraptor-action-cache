@@ -12,6 +12,7 @@ import br.com.caelum.vraptor.proxy.Proxifier;
 import br.com.caelum.vraptor.view.DefaultPageResult;
 import br.com.caelum.vraptor.view.PageResult;
 import br.com.caelum.vraptor.view.PathResolver;
+import br.com.caelum.vraptor.view.ResultException;
 
 @RequestScoped
 public class CachedPage implements PageResult{
@@ -40,30 +41,43 @@ public class CachedPage implements PageResult{
 	
 
 	public void defaultView() {
+		handleCache(new Runnable() {			
+			@Override
+			public void run() {
+				pageResult.defaultView();
+			}
+		});		
+	}
+	
+	private void handleCache(Runnable runnable){
 		Cached cached = methodInfo.getControllerMethod().getMethod().getAnnotation(Cached.class);
 		String body = actionCache.fetch(cached.key());
 		if(body==null){
-			pageResult.defaultView();
+			runnable.run();
 			body  = responseBody.getOutput();
 			actionCache.write(cached.key(),body);	
 		}
 		try {
 			response.getWriter().print(body);
 		} catch (IOException e) {
-			//TODO descobrir o que fazer aqui
-			e.printStackTrace();
+			throw new ResultException(e);
 		}
-		
 	}
 
 	@Override
-	public void forwardTo(String arg0) {
+	public void forwardTo(final String url) {
+		handleCache(new Runnable() {			
+			@Override
+			public void run() {
+				pageResult.forwardTo(url);
+			}
+		});
 		
 	}
 
 	@Override
 	public void include() {
-		
+		pageResult.include();
 	}
 
 	@Override
