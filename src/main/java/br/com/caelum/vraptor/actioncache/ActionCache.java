@@ -1,5 +1,7 @@
 package br.com.caelum.vraptor.actioncache;
 
+import java.util.concurrent.Callable;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -28,6 +30,12 @@ public class ActionCache {
 	public String fetch(String key) {
 		return cache.fetch(key);
 	}
+
+	public String fetch(String key, Callable<String> writeFunction) {
+		return cache.fetch(key, writeFunction);
+	}
+	
+	
 	
 	
 	
