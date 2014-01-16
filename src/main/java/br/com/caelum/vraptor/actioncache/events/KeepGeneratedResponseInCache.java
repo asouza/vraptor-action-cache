@@ -11,37 +11,36 @@ import org.jboss.weld.interceptor.util.proxy.TargetInstanceProxy;
 import br.com.caelum.vraptor.actioncache.ActionCache;
 import br.com.caelum.vraptor.actioncache.Cached;
 import br.com.caelum.vraptor.actioncache.CachedAction;
+import br.com.caelum.vraptor.actioncache.CachedMethodExecuted;
 import br.com.caelum.vraptor.actioncache.CharArrayWriterResponse;
 import br.com.caelum.vraptor.core.MethodInfo;
-import br.com.caelum.vraptor.events.MethodExecuted;
 import br.com.caelum.vraptor.http.MutableResponse;
 
 @RequestScoped
-public class CachedForwardToDefaultView {
+public class KeepGeneratedResponseInCache {
 
 	private MutableResponse response;
 	private MethodInfo methodInfo;
 	private ActionCache actionCache;
 
 	@Deprecated
-	public CachedForwardToDefaultView() {
+	public KeepGeneratedResponseInCache() {
 	}
 
 	@Inject
-	public CachedForwardToDefaultView(MutableResponse response, MethodInfo methodInfo, ActionCache actionCache) {
+	public KeepGeneratedResponseInCache(MutableResponse response, MethodInfo methodInfo, ActionCache actionCache) {
 		super();
 		this.response = response;
 		this.methodInfo = methodInfo;
 		this.actionCache = actionCache;
 	}
 
-	public void forward(@Observes @CachedAction MethodExecuted event) {
-		Cached cached = methodInfo.getControllerMethod().getMethod().getAnnotation(Cached.class);
+	public void execute(@Observes @CachedAction CachedMethodExecuted event) {
+		Cached cached = event.getCached();
 		actionCache.fetch(cached.key(), new Callable<String>() {
 
 			@Override
 			public String call() throws Exception {
-				// TODO Auto-generated method stub
 				TargetInstanceProxy proxy = (TargetInstanceProxy)response;
 				return ((CharArrayWriterResponse)proxy.getTargetInstance()).getOutput();
 			}

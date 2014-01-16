@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import br.com.caelum.vraptor.actioncache.ActionCache;
 import br.com.caelum.vraptor.actioncache.Cached;
 import br.com.caelum.vraptor.actioncache.CachedActionBinding;
+import br.com.caelum.vraptor.actioncache.CachedMethodExecuted;
 import br.com.caelum.vraptor.actioncache.WriteResponseBinding;
 import br.com.caelum.vraptor.core.MethodInfo;
 import br.com.caelum.vraptor.events.EndOfInterceptorStack;
@@ -22,7 +23,7 @@ import br.com.caelum.vraptor.validator.Validator;
 public class CachedExecuteMethod extends ExecuteMethod {
 
 	private ActionCache actionCache;
-	private Event<MethodExecuted> methodExecutedEvent;
+	private Event<CachedMethodExecuted> cachedMethodExecutedEvent;
 	private MethodInfo methodInfo;
 	
 	
@@ -36,16 +37,17 @@ public class CachedExecuteMethod extends ExecuteMethod {
 	@Inject
 	public CachedExecuteMethod(MethodInfo methodInfo, Validator validator, MethodExecutor methodExecutor,
 			Event<MethodExecuted> methodExecutedEvent, Event<ReadyToExecuteMethod> readyToExecuteMethod,
-			ActionCache actionCache,HttpServletResponse response) {
+			ActionCache actionCache,HttpServletResponse response,Event<CachedMethodExecuted> cachedMethodExecutedEvent) {
 		super(methodInfo, validator, methodExecutor, methodExecutedEvent, readyToExecuteMethod);
 		this.methodInfo = methodInfo;
-		this.methodExecutedEvent = methodExecutedEvent;
 		this.actionCache = actionCache;
+		this.cachedMethodExecutedEvent = cachedMethodExecutedEvent;
 	}
 
 	@Override
 	public void execute(@Observes EndOfInterceptorStack stack) {
-		Cached cached = stack.getControllerMethod().getMethod().getAnnotation(Cached.class);
+		CachedMethodExecuted cachedMethodExecuted = new CachedMethodExecuted(stack.getControllerMethod());
+		Cached cached = cachedMethodExecuted.getCached();
 		if(cached==null){
 			super.execute(stack);
 			return ;
@@ -54,8 +56,8 @@ public class CachedExecuteMethod extends ExecuteMethod {
 		if (body == null) {
 			super.execute(stack);
 		}
-		methodExecutedEvent.select(new CachedActionBinding()).fire(new MethodExecuted(stack.getControllerMethod(), methodInfo));
-		methodExecutedEvent.select(new WriteResponseBinding()).fire(new MethodExecuted(stack.getControllerMethod(), methodInfo));
+		cachedMethodExecutedEvent.select(new CachedActionBinding()).fire(cachedMethodExecuted);
+		cachedMethodExecutedEvent.select(new WriteResponseBinding()).fire(cachedMethodExecuted);
 		
 	}
 }

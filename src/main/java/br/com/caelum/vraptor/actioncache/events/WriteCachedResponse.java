@@ -13,6 +13,7 @@ import com.sun.corba.se.spi.orbutil.fsm.Action;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.actioncache.ActionCache;
 import br.com.caelum.vraptor.actioncache.Cached;
+import br.com.caelum.vraptor.actioncache.CachedMethodExecuted;
 import br.com.caelum.vraptor.actioncache.CharArrayWriterResponse;
 import br.com.caelum.vraptor.actioncache.WriteResponse;
 import br.com.caelum.vraptor.core.MethodInfo;
@@ -39,7 +40,7 @@ public class WriteCachedResponse {
 		this.methodInfo = methodInfo;
 	}
 
-	public void execute(@Observes @WriteResponse MethodExecuted executed) {
+	public void execute(@Observes @WriteResponse CachedMethodExecuted executed) {
 		try {
 			Cached cached = methodInfo.getControllerMethod().getMethod().getAnnotation(Cached.class);
 			TargetInstanceProxy proxy = (TargetInstanceProxy)response;
