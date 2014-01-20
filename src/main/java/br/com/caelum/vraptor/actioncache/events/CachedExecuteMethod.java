@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 
 import br.com.caelum.vraptor.actioncache.ActionCache;
+import br.com.caelum.vraptor.actioncache.ActionCacheEntry;
 import br.com.caelum.vraptor.actioncache.Cached;
 import br.com.caelum.vraptor.actioncache.CachedActionBinding;
 import br.com.caelum.vraptor.actioncache.CachedMethodExecuted;
@@ -52,7 +53,7 @@ public class CachedExecuteMethod extends ExecuteMethod {
 			super.execute(stack);
 			return ;
 		}
-		String body = actionCache.fetch(cached.key());
+		ActionCacheEntry body = actionCache.fetch(cached.key());
 		if (body == null) {
 			super.execute(stack);
 		}

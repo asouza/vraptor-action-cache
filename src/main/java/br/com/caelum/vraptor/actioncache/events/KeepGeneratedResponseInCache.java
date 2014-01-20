@@ -1,5 +1,7 @@
 package br.com.caelum.vraptor.actioncache.events;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 import javax.enterprise.context.RequestScoped;
@@ -9,18 +11,17 @@ import javax.inject.Inject;
 import org.jboss.weld.interceptor.util.proxy.TargetInstanceProxy;
 
 import br.com.caelum.vraptor.actioncache.ActionCache;
+import br.com.caelum.vraptor.actioncache.ActionCacheEntry;
 import br.com.caelum.vraptor.actioncache.Cached;
 import br.com.caelum.vraptor.actioncache.CachedAction;
 import br.com.caelum.vraptor.actioncache.CachedMethodExecuted;
 import br.com.caelum.vraptor.actioncache.CharArrayWriterResponse;
-import br.com.caelum.vraptor.core.MethodInfo;
 import br.com.caelum.vraptor.http.MutableResponse;
 
 @RequestScoped
 public class KeepGeneratedResponseInCache {
 
 	private MutableResponse response;
-	private MethodInfo methodInfo;
 	private ActionCache actionCache;
 
 	@Deprecated
@@ -28,21 +29,22 @@ public class KeepGeneratedResponseInCache {
 	}
 
 	@Inject
-	public KeepGeneratedResponseInCache(MutableResponse response, MethodInfo methodInfo, ActionCache actionCache) {
+	public KeepGeneratedResponseInCache(MutableResponse response, ActionCache actionCache) {
 		super();
 		this.response = response;
-		this.methodInfo = methodInfo;
 		this.actionCache = actionCache;
 	}
 
 	public void execute(@Observes @CachedAction CachedMethodExecuted event) {
 		Cached cached = event.getCached();
-		actionCache.fetch(cached.key(), new Callable<String>() {
+		actionCache.fetch(cached.key(), new Callable<ActionCacheEntry>() {
 
 			@Override
-			public String call() throws Exception {
+			public ActionCacheEntry call() throws Exception {
 				TargetInstanceProxy proxy = (TargetInstanceProxy)response;
-				return ((CharArrayWriterResponse)proxy.getTargetInstance()).getOutput();
+				CharArrayWriterResponse charResponse = (CharArrayWriterResponse)proxy.getTargetInstance();
+				String result = charResponse.getOutput();				
+				return new ActionCacheEntry(result,charResponse.getHeaders());
 			}
 		});
 	}
