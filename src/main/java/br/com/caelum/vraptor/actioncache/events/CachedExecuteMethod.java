@@ -25,7 +25,6 @@ public class CachedExecuteMethod extends ExecuteMethod {
 
 	private ActionCache actionCache;
 	private Event<CachedMethodExecuted> cachedMethodExecutedEvent;
-	private MethodInfo methodInfo;
 	
 	
 	/**
@@ -40,7 +39,6 @@ public class CachedExecuteMethod extends ExecuteMethod {
 			Event<MethodExecuted> methodExecutedEvent, Event<ReadyToExecuteMethod> readyToExecuteMethod,
 			ActionCache actionCache,HttpServletResponse response,Event<CachedMethodExecuted> cachedMethodExecutedEvent) {
 		super(methodInfo, validator, methodExecutor, methodExecutedEvent, readyToExecuteMethod);
-		this.methodInfo = methodInfo;
 		this.actionCache = actionCache;
 		this.cachedMethodExecutedEvent = cachedMethodExecutedEvent;
 	}

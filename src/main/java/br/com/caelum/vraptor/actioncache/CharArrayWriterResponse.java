@@ -67,6 +67,7 @@ public class CharArrayWriterResponse extends VRaptorResponse {
 	public void setDateHeader(String name, long date) {
 		// TODO Auto-generated method stub
 		super.setDateHeader(name, date);
+		keepHeader(name,String.valueOf(date));
 	}
 	
 	@Override
