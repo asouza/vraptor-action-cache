@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+    version="2.0">
+    
+  <description>VRaptor Cache tag</description>
+  <display-name>VCache</display-name>
+  <tlib-version>1.0</tlib-version>
+  <short-name>cache</short-name>
+  <uri>http://github.com/vraptor-stack/cache</uri>
+
+  <tag>
+    <description>
+        Keep the jsp fragment in cache
+    </description>
+    <name>fragmentCache</name>
+    <tag-class>br.com.caelum.vraptor.actioncache.tag.FragmentCache</tag-class>
+    <body-content>scriptless</body-content>
+    <attribute>
+        <description>
+			Key of cache store. Default is infinite
+        </description>
+        <name>key</name>
+        <required>true</required>
+        <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+        <description>
+			Duration of fragment in cache in seconds
+        </description>
+        <name>duration</name>
+        <required>false</required>
+        <rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+
+</taglib>
