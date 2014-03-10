@@ -39,7 +39,7 @@ public class KeepGeneratedResponseInCache {
 	public void execute(@Observes @CachedAction CachedMethodExecuted event) {
 		Cached cached = event.getCached();
 		final CharArrayWriterResponse charResponse = ProxyTargetInstance.get(response);
-		actionCache.fetch(new CacheKey(cached.key(),headers), new Callable<ActionCacheEntry>() {
+		actionCache.fetch(new CacheKey(cached,headers), new Callable<ActionCacheEntry>() {
 
 			@Override
 			public ActionCacheEntry call() throws Exception {

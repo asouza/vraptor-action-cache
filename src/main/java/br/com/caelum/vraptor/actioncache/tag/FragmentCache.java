@@ -11,7 +11,6 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 import br.com.caelum.vraptor.actioncache.ActionCache;
 import br.com.caelum.vraptor.actioncache.ActionCacheEntry;
 import br.com.caelum.vraptor.actioncache.CacheKey;
-import br.com.caelum.vraptor.actioncache.RequestHeaders;
 
 /**
  * It should keep jsp fragment in cache. 
@@ -29,7 +28,7 @@ public class FragmentCache extends SimpleTagSupport {
 	public void doTag() throws JspException, IOException {
 		super.doTag();
 		final StringWriter body = new StringWriter();
-		CacheKey cacheKey = new CacheKey(key,RequestHeaders.empty());
+		CacheKey cacheKey = new CacheKey(key);
 		ActionCacheEntry entry = actionCache.fetch(cacheKey);
 		if (entry == null) {
 			getJspBody().invoke(body);

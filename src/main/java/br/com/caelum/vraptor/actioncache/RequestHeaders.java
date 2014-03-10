@@ -33,9 +33,4 @@ public class RequestHeaders {
 	public Map<String, String> get() {
 		return headers;
 	}
-	
-	public static RequestHeaders empty(){
-		return new RequestHeaders();
-	}
-
 }

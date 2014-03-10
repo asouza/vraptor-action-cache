@@ -44,7 +44,7 @@ public class WriteCachedResponse {
 		try {
 			Cached cached = executed.getCached();
 			CharArrayWriterResponse charArrayResponse = ProxyTargetInstance.get(response);
-			ActionCacheEntry entry = actionCache.fetch(new CacheKey(cached.key(),requestHeaders));
+			ActionCacheEntry entry = actionCache.fetch(new CacheKey(cached,requestHeaders));
 			HttpServletResponse originalResponse = charArrayResponse.delegate();
 			entry.copyHeadersTo(originalResponse);
 			originalResponse.getWriter().print(entry.getResult());

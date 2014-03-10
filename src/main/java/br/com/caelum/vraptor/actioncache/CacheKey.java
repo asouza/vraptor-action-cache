@@ -1,5 +1,6 @@
 package br.com.caelum.vraptor.actioncache;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,19 +15,25 @@ import com.google.common.collect.Sets;
 public class CacheKey {
 
 	private String userKey;
-	private Map<String, String> headers;
-	private Set<String> cacheableHeaders = Sets.newHashSet("accept","accept-language");
+	private Map<String, String> headers = new HashMap<String, String>();
+	private Set<String> cacheableHeaders = Sets.newHashSet("accept", "accept-language");
 
-	public CacheKey(String userKey, RequestHeaders requestHeaders) {
-		this.userKey = userKey;
-		this.headers = Maps.filterKeys(requestHeaders.get(),new Predicate<String>() {
-			@Override
-			public boolean apply(String key) {				
-				return cacheableHeaders.contains(key.toLowerCase());
-			}
-		});
+	public CacheKey(Cached cached, RequestHeaders requestHeaders) {
+		this.userKey = cached.key();
+		if (cached.headers()) {
+			this.headers = Maps.filterKeys(requestHeaders.get(), new Predicate<String>() {
+				@Override
+				public boolean apply(String key) {
+					return cacheableHeaders.contains(key.toLowerCase());
+				}
+			});
+		}
 	}
 	
+	public CacheKey(String userKey){
+		this.userKey = userKey;		 
+	}
+
 	public Map<String, String> getHeaders() {
 		return ImmutableMap.copyOf(headers);
 	}
@@ -61,7 +68,5 @@ public class CacheKey {
 			return false;
 		return true;
 	}
-	
-	
 
 }

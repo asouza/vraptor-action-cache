@@ -55,7 +55,7 @@ public class CachedExecuteMethod extends ExecuteMethod {
 			super.execute(stack);
 			return ;
 		}
-		ActionCacheEntry body = actionCache.fetch(new CacheKey(cached.key(), requestHeaders));
+		ActionCacheEntry body = actionCache.fetch(new CacheKey(cached, requestHeaders));
 		if (body == null) {
 			super.execute(stack);
 		}

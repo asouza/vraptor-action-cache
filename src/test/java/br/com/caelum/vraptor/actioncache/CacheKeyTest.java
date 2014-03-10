@@ -21,17 +21,34 @@ import static org.mockito.Mockito.when;
 public class CacheKeyTest {
 
 	@Test
-	public void shouldKeepOnlyAcceptsHeaders() {
+	public void shouldKeepOnlyAcceptsHeaders() throws Exception {
 		final MutableRequest mutableRequest = request();
 
 		RequestHeaders requestHeaders = new RequestHeaders(mutableRequest);
-		CacheKey cacheKey = new CacheKey("testkey", requestHeaders);
+		Cached cached = this.getClass().getDeclaredMethod("cachedHeaders").getAnnotation(Cached.class);
+		CacheKey cacheKey = new CacheKey(cached,
+				requestHeaders);
 		assertTrue(cacheKey.getHeaders().containsKey("Accept") && cacheKey.getHeaders().containsKey("Accept-Language")
 				&& !cacheKey.getHeaders().containsKey("Connection"));
 	}
+	
+	@Test
+	public void shouldKeepOnlyKeyForNoHeaderOption() throws Exception{
+		final MutableRequest mutableRequest = request();
+		
+		RequestHeaders requestHeaders = new RequestHeaders(mutableRequest);
+		Cached cached = this.getClass().getDeclaredMethod("noCachedHeaders").getAnnotation(Cached.class);
+		CacheKey cacheKey = new CacheKey(cached,
+				requestHeaders);
+		assertTrue(cacheKey.getHeaders().keySet().isEmpty());		
+	}
+	
+	@Cached(key = "testkey")
+	private void cachedHeaders(){}
+	
+	@Cached(key = "testkey",headers=false)
+	private void noCachedHeaders(){}
 
-	
-	
 	private MutableRequest request() {
 		final MutableRequest mutableRequest = mock(MutableRequest.class);
 		final Enumeration<String> headersNames = new Vector<String>(Arrays.asList("Accept", "Accept-Language",
