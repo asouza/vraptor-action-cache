@@ -14,6 +14,7 @@ import br.com.caelum.vraptor.actioncache.ActionCacheEntry;
 import br.com.caelum.vraptor.actioncache.Cached;
 import br.com.caelum.vraptor.actioncache.CachedMethodExecuted;
 import br.com.caelum.vraptor.actioncache.CharArrayWriterResponse;
+import br.com.caelum.vraptor.actioncache.ProxyTargetInstance;
 import br.com.caelum.vraptor.actioncache.WriteResponse;
 import br.com.caelum.vraptor.http.MutableResponse;
 import br.com.caelum.vraptor.view.ResultException;
@@ -38,8 +39,7 @@ public class WriteCachedResponse {
 	public void execute(@Observes @WriteResponse CachedMethodExecuted executed) {
 		try {
 			Cached cached = executed.getCached();
-			TargetInstanceProxy proxy = (TargetInstanceProxy)response;
-			CharArrayWriterResponse charArrayResponse = (CharArrayWriterResponse) proxy.getTargetInstance();
+			CharArrayWriterResponse charArrayResponse = ProxyTargetInstance.get(response);
 			ActionCacheEntry entry = actionCache.fetch(cached.key());
 			HttpServletResponse originalResponse = charArrayResponse.delegate();
 			entry.copyHeadersTo(originalResponse);

@@ -1,7 +1,5 @@
 package br.com.caelum.vraptor.actioncache.events;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.Callable;
 
 import javax.enterprise.context.RequestScoped;
@@ -16,6 +14,7 @@ import br.com.caelum.vraptor.actioncache.Cached;
 import br.com.caelum.vraptor.actioncache.CachedAction;
 import br.com.caelum.vraptor.actioncache.CachedMethodExecuted;
 import br.com.caelum.vraptor.actioncache.CharArrayWriterResponse;
+import br.com.caelum.vraptor.actioncache.ProxyTargetInstance;
 import br.com.caelum.vraptor.http.MutableResponse;
 
 @RequestScoped
@@ -41,8 +40,7 @@ public class KeepGeneratedResponseInCache {
 
 			@Override
 			public ActionCacheEntry call() throws Exception {
-				TargetInstanceProxy proxy = (TargetInstanceProxy)response;
-				CharArrayWriterResponse charResponse = (CharArrayWriterResponse)proxy.getTargetInstance();
+				CharArrayWriterResponse charResponse = ProxyTargetInstance.get(response);
 				String result = charResponse.getOutput();				
 				return new ActionCacheEntry(result,charResponse.getHeaders());
 			}
