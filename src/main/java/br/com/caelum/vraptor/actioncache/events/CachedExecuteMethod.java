@@ -8,9 +8,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import br.com.caelum.vraptor.actioncache.ActionCache;
 import br.com.caelum.vraptor.actioncache.ActionCacheEntry;
+import br.com.caelum.vraptor.actioncache.CacheKey;
 import br.com.caelum.vraptor.actioncache.Cached;
 import br.com.caelum.vraptor.actioncache.CachedActionBinding;
 import br.com.caelum.vraptor.actioncache.CachedMethodExecuted;
+import br.com.caelum.vraptor.actioncache.RequestHeaders;
 import br.com.caelum.vraptor.actioncache.WriteResponseBinding;
 import br.com.caelum.vraptor.core.MethodInfo;
 import br.com.caelum.vraptor.events.EndOfInterceptorStack;
@@ -25,6 +27,7 @@ public class CachedExecuteMethod extends ExecuteMethod {
 
 	private ActionCache actionCache;
 	private Event<CachedMethodExecuted> cachedMethodExecutedEvent;
+	private RequestHeaders requestHeaders;
 	
 	
 	/**
@@ -37,10 +40,11 @@ public class CachedExecuteMethod extends ExecuteMethod {
 	@Inject
 	public CachedExecuteMethod(MethodInfo methodInfo, Validator validator, MethodExecutor methodExecutor,
 			Event<MethodExecuted> methodExecutedEvent, Event<ReadyToExecuteMethod> readyToExecuteMethod,
-			ActionCache actionCache,HttpServletResponse response,Event<CachedMethodExecuted> cachedMethodExecutedEvent) {
+			ActionCache actionCache,HttpServletResponse response,Event<CachedMethodExecuted> cachedMethodExecutedEvent,RequestHeaders requestHeaders) {
 		super(methodInfo, validator, methodExecutor, methodExecutedEvent, readyToExecuteMethod);
 		this.actionCache = actionCache;
 		this.cachedMethodExecutedEvent = cachedMethodExecutedEvent;
+		this.requestHeaders = requestHeaders;
 	}
 
 	@Override
@@ -51,7 +55,7 @@ public class CachedExecuteMethod extends ExecuteMethod {
 			super.execute(stack);
 			return ;
 		}
-		ActionCacheEntry body = actionCache.fetch(cached.key());
+		ActionCacheEntry body = actionCache.fetch(new CacheKey(cached.key(), requestHeaders));
 		if (body == null) {
 			super.execute(stack);
 		}

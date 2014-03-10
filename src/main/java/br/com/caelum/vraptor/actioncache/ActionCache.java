@@ -11,10 +11,10 @@ import br.com.caelum.vraptor.cache.CacheStore;
 public class ActionCache {
 
 	@Inject
-	private CacheStore<String, ActionCacheEntry> cache;
+	private CacheStore<CacheKey, ActionCacheEntry> cache;
 
 	@Inject
-	public ActionCache(CacheStore<String, ActionCacheEntry> cache) {
+	public ActionCache(CacheStore<CacheKey, ActionCacheEntry> cache) {
 		super();
 		this.cache = cache;
 	}
@@ -23,17 +23,18 @@ public class ActionCache {
 	public ActionCache() {
 	}
 
-	public ActionCacheEntry write(String key, ActionCacheEntry value) {
+	public ActionCacheEntry write(CacheKey key, ActionCacheEntry value) {
 		return cache.write(key, value);
 	}
 
-	public ActionCacheEntry fetch(String key) {
+	public ActionCacheEntry fetch(CacheKey key) {
 		return cache.fetch(key);
 	}
 
-	public ActionCacheEntry fetch(String key, Callable<ActionCacheEntry> writeFunction) {
-		return cache.fetch(key, writeFunction);
+	public ActionCacheEntry fetch(CacheKey key, Callable<ActionCacheEntry> valueProvider) {
+		return cache.fetch(key, valueProvider);
 	}
+
 	
 	
 	

@@ -15,4 +15,6 @@ public @interface Cached {
      * The duration the action should be cached for.  Defaults to 0.
      */
     int duration() default 0;
+
+	boolean headers() default true;
 }

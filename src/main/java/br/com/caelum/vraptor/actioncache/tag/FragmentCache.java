@@ -10,6 +10,8 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 import br.com.caelum.vraptor.actioncache.ActionCache;
 import br.com.caelum.vraptor.actioncache.ActionCacheEntry;
+import br.com.caelum.vraptor.actioncache.CacheKey;
+import br.com.caelum.vraptor.actioncache.RequestHeaders;
 
 /**
  * It should keep jsp fragment in cache. 
@@ -27,12 +29,13 @@ public class FragmentCache extends SimpleTagSupport {
 	public void doTag() throws JspException, IOException {
 		super.doTag();
 		final StringWriter body = new StringWriter();
-		ActionCacheEntry entry = actionCache.fetch(key);
+		CacheKey cacheKey = new CacheKey(key,RequestHeaders.empty());
+		ActionCacheEntry entry = actionCache.fetch(cacheKey);
 		if (entry == null) {
 			getJspBody().invoke(body);
-			actionCache.write(key, new ActionCacheEntry(body.toString(), new HashMap<String, String>()));
+			actionCache.write(cacheKey, new ActionCacheEntry(body.toString(), new HashMap<String, String>()));
 		}
-		getJspContext().getOut().println(actionCache.fetch(key).getResult());
+		getJspContext().getOut().println(actionCache.fetch(cacheKey).getResult());
 	}
 
 	public void setDuration(int duration) {
