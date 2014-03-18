@@ -7,7 +7,8 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jboss.weld.interceptor.util.proxy.TargetInstanceProxy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import br.com.caelum.vraptor.actioncache.ActionCache;
 import br.com.caelum.vraptor.actioncache.ActionCacheEntry;
@@ -27,6 +28,7 @@ public class WriteCachedResponse {
 	private MutableResponse response;
 	private ActionCache actionCache;
 	private RequestHeaders requestHeaders;
+	private static final Logger logger = LoggerFactory.getLogger(WriteCachedResponse.class);
 
 	@Deprecated
 	public WriteCachedResponse() {
@@ -47,6 +49,7 @@ public class WriteCachedResponse {
 			ActionCacheEntry entry = actionCache.fetch(new CacheKey(cached,requestHeaders));
 			HttpServletResponse originalResponse = charArrayResponse.delegate();
 			entry.copyHeadersTo(originalResponse);
+			logger.debug("Using cached response for {}",cached.key());
 			originalResponse.getWriter().print(entry.getResult());
 		} catch (IOException e) {
 			throw new ResultException(e);
