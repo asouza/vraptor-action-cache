@@ -7,11 +7,9 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.interceptor.Interceptor;
 
-import com.google.common.cache.Cache;
-
 import br.com.caelum.vraptor.core.MethodInfo;
 import br.com.caelum.vraptor.http.MutableResponse;
-import br.com.caelum.vraptor.ioc.cdi.CDIRequestInfoFactory;
+import br.com.caelum.vraptor.ioc.cdi.CDIRequestFactories;
 
 @RequestScoped
 @Alternative
@@ -19,13 +17,13 @@ import br.com.caelum.vraptor.ioc.cdi.CDIRequestInfoFactory;
 public class CachedHttpResponseFactory{
 
 	@Inject
-	private CDIRequestInfoFactory cdiRequestInfoFactory;
+	private CDIRequestFactories requestFactories;
 	@Inject
 	private MethodInfo methodInfo;
 
 	@Produces @javax.enterprise.context.RequestScoped
 	public MutableResponse getInstance(){
-		MutableResponse response = cdiRequestInfoFactory.producesRequestInfo().getResponse();
+		MutableResponse response = requestFactories.getResponse();
 		if(!methodInfo.getControllerMethod().containsAnnotation(Cached.class)){
 			return response;
 		}
