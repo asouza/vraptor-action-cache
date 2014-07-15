@@ -17,9 +17,14 @@ public class CacheKey {
 	private String userKey;
 	private Map<String, String> headers = new HashMap<String, String>();
 	private Set<String> cacheableHeaders = Sets.newHashSet("accept", "accept-language");
+	private String calculatedKey;
+	private int duration;
+	private int idleTime;
 
 	public CacheKey(Cached cached, RequestHeaders requestHeaders) {
 		this.userKey = cached.key();
+		this.duration = cached.duration();
+		this.idleTime = cached.idleTime();
 		if (cached.headers()) {
 			this.headers = Maps.filterKeys(requestHeaders.get(), new Predicate<String>() {
 				@Override
@@ -28,6 +33,27 @@ public class CacheKey {
 				}
 			});
 		}
+		this.calculatedKey = calculateKey();
+	}
+	
+	public int getIdleTime() {
+		return idleTime;
+	}
+	
+	public int getDuration() {
+		return duration;
+	}
+	
+	private String calculateKey() {
+		StringBuilder key = new StringBuilder(userKey+".");
+		for(String header : headers.values()){
+			key.append(header);
+		}		
+		return key.toString();
+	}
+
+	public String value(){
+		return calculatedKey;
 	}
 	
 	public CacheKey(String userKey){

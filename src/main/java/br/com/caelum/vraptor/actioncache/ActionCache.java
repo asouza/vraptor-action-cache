@@ -10,11 +10,10 @@ import br.com.caelum.vraptor.cache.CacheStore;
 @ApplicationScoped
 public class ActionCache {
 
-	@Inject
 	private CacheStore<CacheKey, ActionCacheEntry> cache;
 
-	@Inject
-	public ActionCache(CacheStore<CacheKey, ActionCacheEntry> cache) {
+	@Inject	
+	public ActionCache(@EhCacheVersion CacheStore<CacheKey, ActionCacheEntry> cache) {
 		super();
 		this.cache = cache;
 	}

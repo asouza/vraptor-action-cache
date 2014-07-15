@@ -27,17 +27,19 @@
 			<version>4.0.0.Final</version>
 		</dependency>
 
-    <dependency>
-      <groupId>org.jboss.weld.servlet</groupId>
-      <artifactId>weld-servlet</artifactId>
-      <version>2.1.1.Final</version>
-    </dependency>
+		<dependency>
+			<groupId>org.jboss.weld.servlet</groupId>
+			<artifactId>weld-servlet</artifactId>
+			<version>2.1.1.Final</version>
+			<scope>provided</scope>
+		</dependency>
 
-    <dependency>
-            <groupId>org.jboss.weld.se</groupId>
-            <artifactId>weld-se-core</artifactId>
-            <version>2.1.1.Final</version>
-    </dependency>
+		<dependency>
+			<groupId>org.jboss.weld.se</groupId>
+			<artifactId>weld-se-core</artifactId>
+			<version>2.1.1.Final</version>
+			<scope>provided</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
@@ -66,13 +68,14 @@
 		<dependency>
 			<groupId>org.mortbay.jetty</groupId>
 			<artifactId>servlet-api</artifactId>
-			<version>3.0.20100224</version>			
+			<version>3.0.20100224</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish.web</groupId>
 			<artifactId>javax.el</artifactId>
 			<version>2.2.4</version>
-			<scope>provided</scope>			
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
@@ -89,6 +92,7 @@
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
 			<version>1.1.0.Final</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -96,15 +100,35 @@
 			<version>1.2</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>javax.servlet.jsp</groupId>
 			<artifactId>jsp-api</artifactId>
 			<version>2.2</version>
 			<scope>provided</scope>
-		</dependency>		
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache-core</artifactId>
+			<version>2.2.1-SNAPSHOT</version>
+		</dependency>
 
 	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>sourceforge</id>
+			<url>http://oss.sonatype.org/content/groups/sourceforge/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
 	<build>
 		<plugins>
 			<plugin>

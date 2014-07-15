@@ -12,9 +12,11 @@ public @interface Cached {
 	String key();
 
     /**
-     * The duration the action should be cached for.  Defaults to 0.
+     * The duration the action should be cached for.  Defaults to 3600(1 hour).
      */
-    int duration() default 0;
-
+    int duration() default 3600;
+    
+    int idleTime() default 3600;
+    
 	boolean headers() default true;
 }
