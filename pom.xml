@@ -8,9 +8,9 @@
 	<packaging>jar</packaging>
 
 	<scm>
-		<url>http://github.com/caelum/vraptor-action-cache</url>
-		<connection>scm:git:git://github.com/caelum/vraptor-action-cache</connection>
-		<developerConnection>scm:git:git@github.com:caelum/vraptor-action-cache.git</developerConnection>
+		<url>http://github.com/asouza/vraptor-action-cache</url>
+		<connection>scm:git:git://github.com/asouza/vraptor-action-cache</connection>
+		<developerConnection>scm:git:git@github.com:asouza/vraptor-action-cache.git</developerConnection>
 	</scm>
 
     <parent>
