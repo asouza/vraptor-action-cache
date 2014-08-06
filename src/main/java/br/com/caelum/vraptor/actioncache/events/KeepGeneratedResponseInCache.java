@@ -3,21 +3,14 @@ package br.com.caelum.vraptor.actioncache.events;
 import java.util.concurrent.Callable;
 
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import br.com.caelum.vraptor.actioncache.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import br.com.caelum.vraptor.actioncache.ActionCache;
-import br.com.caelum.vraptor.actioncache.ActionCacheEntry;
-import br.com.caelum.vraptor.actioncache.CacheKey;
-import br.com.caelum.vraptor.actioncache.Cached;
-import br.com.caelum.vraptor.actioncache.CachedAction;
-import br.com.caelum.vraptor.actioncache.CachedMethodExecuted;
-import br.com.caelum.vraptor.actioncache.CharArrayWriterResponse;
-import br.com.caelum.vraptor.actioncache.ProxyTargetInstance;
-import br.com.caelum.vraptor.actioncache.RequestHeaders;
 import br.com.caelum.vraptor.http.MutableResponse;
 
 @RequestScoped
@@ -26,6 +19,7 @@ public class KeepGeneratedResponseInCache {
 	private MutableResponse response;
 	private ActionCache actionCache;
 	private RequestHeaders headers;
+	private Event<CachedMethodExecuted> event;
 	private static final Logger logger = LoggerFactory.getLogger(KeepGeneratedResponseInCache.class);
 
 	@Deprecated
@@ -33,17 +27,23 @@ public class KeepGeneratedResponseInCache {
 	}
 
 	@Inject
-	public KeepGeneratedResponseInCache(MutableResponse response, ActionCache actionCache, RequestHeaders headers) {
+	public KeepGeneratedResponseInCache(MutableResponse response, ActionCache actionCache, RequestHeaders headers,
+										Event<CachedMethodExecuted> event) {
 		super();
 		this.response = response;
 		this.actionCache = actionCache;
 		this.headers = headers;
+		this.event = event;
 	}
 
-	public void execute(@Observes @CachedAction CachedMethodExecuted event) {
-		final Cached cached = event.getCached();
+	public void execute(@Observes @CachedAction CachedMethodExecuted cachedMethodExecuted) {
+		final Cached cached = cachedMethodExecuted.getCached();
 		final CharArrayWriterResponse charResponse = ProxyTargetInstance.get(response);
-		actionCache.fetch(new CacheKey(cached, headers), new Callable<ActionCacheEntry>() {
+		CacheKey key = new CacheKey(cached, headers);
+		if (actionCache.exists(key)) {
+			event.select(new WriteResponseBinding()).fire(cachedMethodExecuted);
+		}
+		actionCache.fetch(key, new Callable<ActionCacheEntry>() {
 
 			@Override
 			public ActionCacheEntry call() throws Exception {

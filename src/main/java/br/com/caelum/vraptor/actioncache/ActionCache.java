@@ -34,10 +34,8 @@ public class ActionCache {
 		return cache.fetch(key, valueProvider);
 	}
 
-	
-	
-	
-	
-	
 
+	public boolean exists(CacheKey key) {
+		return cache.fetch(key) != null;
+	}
 }

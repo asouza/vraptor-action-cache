@@ -3,6 +3,7 @@ package br.com.caelum.vraptor.actioncache.events;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Specializes;
 import javax.inject.Inject;
 
 import br.com.caelum.vraptor.Result;
@@ -26,6 +27,7 @@ import br.com.caelum.vraptor.observer.ForwardToDefaultView;
  * @author Alberto Souza
  * 
  */
+@Specializes
 @RequestScoped
 public class KeepResultInCache extends ForwardToDefaultView {
 
@@ -56,7 +58,11 @@ public class KeepResultInCache extends ForwardToDefaultView {
 	public void forward(@Observes final RequestSucceded event) {
 		ExecuteIfNoCache executeIfNoCache = new ExecuteIfNoCache(controllerMethod,
 				actionCache, requestHeaders);
-		
+		if (!controllerMethod.containsAnnotation(Cached.class)) {
+			super.forward(event);
+			return;
+		}
+
 		executeIfNoCache.execute(new Runnable() {
 			@Override
 			public void run() {
@@ -65,6 +71,6 @@ public class KeepResultInCache extends ForwardToDefaultView {
 		});
 
 		cachedMethodExecutedEvent.select(new CachedActionBinding()).fire(cachedMethodExecuted);
-		cachedMethodExecutedEvent.select(new WriteResponseBinding()).fire(cachedMethodExecuted);
+
 	}
 }

@@ -14,22 +14,27 @@ import br.com.caelum.vraptor.http.VRaptorResponse;
 @Vetoed
 public class CharArrayWriterResponse extends VRaptorResponse {
 
-	private final CharArrayWriter charArray = new CharArrayWriter();
+	private final CachedWriter writer;
 	private HttpServletResponse originalResponse;
 	private Map<String,String> headers = new HashMap<>();
 
 	public CharArrayWriterResponse(HttpServletResponse response) {
 		super(response);
 		this.originalResponse = response;
+		try {
+			this.writer = new CachedWriter(response);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
 	public PrintWriter getWriter() throws IOException {
-		return new PrintWriter(charArray);
+		return writer;
 	}
 
 	public String getOutput() {
-		return charArray.toString();
+		return writer.getOutput();
 	}
 	
 	public HttpServletResponse delegate(){
@@ -44,35 +49,36 @@ public class CharArrayWriterResponse extends VRaptorResponse {
 	
 	@Override
 	public void addHeader(String name, String value) {
-		// TODO Auto-generated method stub
 		super.addHeader(name, value);
 		keepHeader(name, value);
 	}
 	
 	@Override
 	public void addDateHeader(String name, long date) {
-		// TODO Auto-generated method stub
 		super.addDateHeader(name, date);
 		keepHeader(name, String.valueOf(date));
 	}
 	
 	@Override
 	public void addIntHeader(String name, int value) {
-		// TODO Auto-generated method stub
 		super.addIntHeader(name, value);
 		keepHeader(name, String.valueOf(value));
 	}
 	
 	@Override
 	public void setDateHeader(String name, long date) {
-		// TODO Auto-generated method stub
 		super.setDateHeader(name, date);
 		keepHeader(name,String.valueOf(date));
 	}
-	
+
+	@Override
+	public void flushBuffer() throws IOException {
+		super.flushBuffer();
+		System.out.println("flushing");
+	}
+
 	@Override
 	public void setIntHeader(String name, int value) {
-		// TODO Auto-generated method stub
 		super.setIntHeader(name, value);
 		keepHeader(name, String.valueOf(value));
 	}

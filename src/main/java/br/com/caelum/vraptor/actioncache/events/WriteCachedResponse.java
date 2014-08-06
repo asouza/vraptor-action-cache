@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
@@ -49,8 +50,10 @@ public class WriteCachedResponse {
 			ActionCacheEntry entry = actionCache.fetch(new CacheKey(cached,requestHeaders));
 			HttpServletResponse originalResponse = charArrayResponse.delegate();
 			entry.copyHeadersTo(originalResponse);
-			logger.debug("Using cached response for {}",cached.key());
-			originalResponse.getWriter().print(entry.getResult());
+			logger.debug("Using cached response for {}", cached.key());
+			ServletOutputStream os = originalResponse.getOutputStream();
+			os.print(entry.getResult());
+			originalResponse.flushBuffer();
 		} catch (IOException e) {
 			throw new ResultException(e);
 		}
