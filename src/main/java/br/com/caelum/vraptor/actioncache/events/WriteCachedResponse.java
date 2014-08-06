@@ -51,8 +51,7 @@ public class WriteCachedResponse {
 			HttpServletResponse originalResponse = charArrayResponse.delegate();
 			entry.copyHeadersTo(originalResponse);
 			logger.debug("Using cached response for {}", cached.key());
-			ServletOutputStream os = originalResponse.getOutputStream();
-			os.print(entry.getResult());
+			originalResponse.getWriter().write(entry.getResult());
 			originalResponse.flushBuffer();
 		} catch (IOException e) {
 			throw new ResultException(e);
