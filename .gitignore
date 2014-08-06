@@ -7,3 +7,6 @@ jsp-compilation/
 *.jsp
 *.tag
 
+.iml/
+vraptor-action-cache.iml
+.idea/
