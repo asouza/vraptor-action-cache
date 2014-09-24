@@ -17,6 +17,7 @@ import br.com.caelum.vraptor.events.InterceptorsExecuted;
 import br.com.caelum.vraptor.events.MethodExecuted;
 import br.com.caelum.vraptor.events.MethodReady;
 import br.com.caelum.vraptor.observer.ExecuteMethod;
+import br.com.caelum.vraptor.validator.Messages;
 import br.com.caelum.vraptor.validator.Validator;
 
 @Specializes
@@ -26,10 +27,10 @@ public class CachedExecuteMethod extends ExecuteMethod {
 	private RequestHeaders requestHeaders;
 
 	@Inject
-	public CachedExecuteMethod(MethodInfo methodInfo, Validator validator, Event<MethodExecuted> methodExecutedEvent,
+	public CachedExecuteMethod(MethodInfo methodInfo, Messages messages, Event<MethodExecuted> methodExecutedEvent,
 			Event<MethodReady> readyToExecuteMethod, ActionCache actionCache, HttpServletResponse response,
 			RequestHeaders requestHeaders) {
-		super(methodInfo, validator, methodExecutedEvent, readyToExecuteMethod);
+		super(methodInfo, messages, methodExecutedEvent, readyToExecuteMethod);
 		this.actionCache = actionCache;
 		this.requestHeaders = requestHeaders;
 	}

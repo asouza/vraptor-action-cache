@@ -6,6 +6,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 
+import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 
 import net.sf.ehcache.Cache;
@@ -46,12 +47,12 @@ public class EhCacheStore implements CacheStore<CacheKey, ActionCacheEntry>{
 	}
 
 	@Override
-	public ActionCacheEntry fetch(CacheKey key, Callable<ActionCacheEntry> valueProvider) {
+	public ActionCacheEntry fetch(CacheKey key, Supplier<ActionCacheEntry> valueProvider) {
 		if(cache.isKeyInCache(key)){
 			return (ActionCacheEntry) cache.get(key).getValue();
 		}
 		try {
-			ActionCacheEntry entry = valueProvider.call();
+			ActionCacheEntry entry = valueProvider.get();
 			return write(key, entry);
 		} catch (Exception e) {
 			Throwables.propagateIfPossible(e);

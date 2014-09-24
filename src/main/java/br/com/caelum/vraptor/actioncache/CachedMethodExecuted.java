@@ -5,7 +5,7 @@ import javax.enterprise.inject.Vetoed;
 import br.com.caelum.vraptor.controller.ControllerMethod;
 
 @Vetoed
-public class CachedMethodExecuted{
+public class CachedMethodExecuted {
 
 
 	private ControllerMethod controllerMethod;

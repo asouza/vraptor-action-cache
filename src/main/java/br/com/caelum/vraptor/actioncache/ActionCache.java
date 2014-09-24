@@ -6,6 +6,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import br.com.caelum.vraptor.cache.CacheStore;
+import com.google.common.base.Supplier;
 
 @ApplicationScoped
 public class ActionCache {
@@ -30,8 +31,18 @@ public class ActionCache {
 		return cache.fetch(key);
 	}
 
-	public ActionCacheEntry fetch(CacheKey key, Callable<ActionCacheEntry> valueProvider) {
-		return cache.fetch(key, valueProvider);
+	public ActionCacheEntry fetch(CacheKey key, final Callable<ActionCacheEntry> valueProvider) {
+		Supplier<ActionCacheEntry> provider = new Supplier<ActionCacheEntry>() {
+			@Override
+			public ActionCacheEntry get() {
+				try {
+					return valueProvider.call();
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
+		};
+		return cache.fetch(key, provider);
 	}
 
 
